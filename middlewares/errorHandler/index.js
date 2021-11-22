@@ -9,6 +9,9 @@ const errorHandler = (err, req, res, next) => {
               : err.errors[0].message,
         });
         break;
+      case 'notFound':
+        res.status(404).json({ error: 'Item not found' });
+        break;
       default:
         res.status(500).json({ error: err });
         break;
