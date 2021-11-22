@@ -14,7 +14,20 @@ module.exports = (sequelize, DataTypes) => {
   }
   Genre.init(
     {
-      genre_name: DataTypes.STRING,
+      genre_name:{
+        allowNull: false,
+        type:  DataTypes.STRING,
+        validate: {
+          notEmpty: {
+            args: true,
+            msg: 'Please insert genre name!'
+          },
+          len: {
+            args: [1,25],
+            msg: 'The length of genre name must be less than 25 characters.'
+          }
+        }
+      },
     },
     {
       sequelize,
