@@ -1,3 +1,5 @@
+const { Op } = require('sequelize');
+
 const { Genre } = require('../models');
 
 class GenreController {
@@ -16,14 +18,35 @@ class GenreController {
       next(err);
     }
   }
-  static async getGenre(_, res, next) {
-    try {
-      const genre = await Genre.findAll({
-        attributes: { exclude: ['createdAt', 'updatedAt'] },
-        order: [['genre_name', 'ASC']],
-      });
+  static async getGenre(req, res, next) {
+    const { keyword = '', limit = 0, page = 0 } = req.query;
 
-      return res.status(200).json(genre);
+    try {
+      const [genre, count, total] = await Promise.all([
+        await Genre.findAll({
+          attributes: { exclude: ['createdAt', 'updatedAt'] },
+          order: [['genre_name', 'ASC']],
+          ...(limit && { limit: Number(limit) }),
+          where: {
+            [Op.or]: [{ genre_name: { [Op.iLike]: '%' + keyword + '%' } }],
+          },
+          offset: !Number(page) ? 0 : Number(limit) * (Number(page) - 1),
+        }),
+        await Genre.count({
+          where: {
+            [Op.or]: [{ genre_name: { [Op.iLike]: '%' + keyword + '%' } }],
+          },
+        }),
+        await Genre.count(),
+      ]);
+
+      return res.status(200).json({
+        count,
+        total,
+        limit: Number(limit),
+        page: !Number(page) ? 1 : Number(page),
+        data: genre,
+      });
     } catch (err) {
       next(err);
     }
@@ -40,7 +63,6 @@ class GenreController {
       if (!find) throw { name: 'notFound' };
 
       await Genre.update(input, { where: { id: genre_id } });
-
       const msg = { message: 'Genre has been updated.' };
 
       return res.status(200).json(msg);
