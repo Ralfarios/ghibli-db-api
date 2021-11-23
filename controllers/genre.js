@@ -19,13 +19,19 @@ class GenreController {
     }
   }
   static async getGenre(req, res, next) {
-    const { keyword = '', limit = 0, page = 0 } = req.query;
+    const {
+      keyword = '',
+      limit = 0,
+      page = 0,
+      sort = 'genre_name', // ('id' || 'genre_name')
+      sort_order = 'ASC', // ('ASC' || 'DESC')
+    } = req.query;
 
     try {
       const [genre, count, total] = await Promise.all([
         await Genre.findAll({
           attributes: { exclude: ['createdAt', 'updatedAt'] },
-          order: [['genre_name', 'ASC']],
+          order: [[sort || 'genre_name', sort_order || 'ASC']],
           ...(limit && { limit: Number(limit) }),
           where: {
             [Op.or]: [{ genre_name: { [Op.iLike]: '%' + keyword + '%' } }],
