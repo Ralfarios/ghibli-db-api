@@ -1,4 +1,4 @@
-const { Movie } = require('../models');
+const { Character, Genre, Movie, MovieGenre } = require('../models');
 
 const { Op } = require('sequelize');
 
@@ -45,6 +45,24 @@ class MovieController {
           attributes: { exclude: ['createdAt', 'updatedAt'] },
           order: [[sort || 'title', sort_order || 'ASC']],
           ...(limit && { limit: Number(limit) }),
+          include: [
+            {
+              model: Character,
+              attributes: { exclude: ['createdAt', 'updatedAt'] },
+            },
+            {
+              model: MovieGenre,
+              attributes: {
+                exclude: ['GenreId', 'MovieId', 'createdAt', 'updatedAt'],
+              },
+              include: [
+                {
+                  model: Genre,
+                  attributes: { exclude: ['createdAt', 'updatedAt'] },
+                },
+              ],
+            },
+          ],
           where: {
             [Op.or]: [{ title: { [Op.iLike]: '%' + keyword + '%' } }],
           },
@@ -69,11 +87,30 @@ class MovieController {
       next(err);
     }
   }
-
   static async getDetailMovie(req, res, next) {
     try {
       const movie_id = Number(req.params.id);
-      const movie = await Movie.findByPk(movie_id);
+      const movie = await Movie.findByPk(movie_id, {
+        attributes: { exclude: ['createdAt', 'updatedAt'] },
+        include: [
+          {
+            model: Character,
+            attributes: { exclude: ['createdAt', 'updatedAt'] },
+          },
+          {
+            model: MovieGenre,
+            attributes: {
+              exclude: ['GenreId', 'MovieId', 'createdAt', 'updatedAt'],
+            },
+            include: [
+              {
+                model: Genre,
+                attributes: { exclude: ['createdAt', 'updatedAt'] },
+              },
+            ],
+          },
+        ],
+      });
 
       if (!movie) throw { name: 'notFound' };
 
@@ -82,7 +119,6 @@ class MovieController {
       next(err);
     }
   }
-
   static async updateMovie(req, res, next) {
     try {
       const movie_id = Number(req.params.id);
@@ -115,7 +151,6 @@ class MovieController {
       next(err);
     }
   }
-
   static async deleteMovie(req, res, next) {
     try {
       const movie_id = Number(req.params.id);
