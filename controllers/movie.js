@@ -86,7 +86,6 @@ class MovieController {
   static async updateMovie(req, res, next) {
     try {
       const movie_id = Number(req.params.id);
-
       const input = {
         box_office: req.body.box_office,
         composer: req.body.composer,
@@ -104,12 +103,11 @@ class MovieController {
         writter: req.body.writter,
       };
 
-      const movie = await Movie.findByPk(movie_id);
+      const find = await Movie.findByPk(movie_id);
 
-      if (!movie) throw { name: 'notFound' };
+      if (!find) throw { name: 'notFound' };
 
       await Movie.update(input, { where: { id: movie_id } });
-
       const msg = { message: 'Movie has been updated.' };
 
       return res.status(200).json(msg);
@@ -137,7 +135,3 @@ class MovieController {
 }
 
 module.exports = MovieController;
-
-/**
- * ADA FARHAN
- */
