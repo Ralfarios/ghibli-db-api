@@ -24,7 +24,7 @@ class MovieController {
 
       const msg = { message: 'New movie has been created.' };
 
-      return res.status(201).json({ msg });
+      return res.status(201).json(msg);
     } catch (err) {
       next(err);
     }
