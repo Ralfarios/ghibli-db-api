@@ -1,5 +1,7 @@
 const { Movie } = require('../models');
 
+const { Op } = require('sequelize');
+
 class MovieController {
   static async createMovie(req, res, next) {
     try {
@@ -29,12 +31,40 @@ class MovieController {
       next(err);
     }
   }
-
   static async getMovies(req, res, next) {
+    const {
+      keyword = '',
+      limit = 0,
+      page = 0,
+      sort = 'title', // ('id' || 'title' || 'original_title' || 'release_date' || 'rating' || 'duration')
+      sort_order = 'ASC', // ('ASC' || 'DESC')
+    } = req.query;
     try {
-      const movie = await Movie.findAll();
+      const [movie, count, total] = await Promise.all([
+        await Movie.findAll({
+          attributes: { exclude: ['createdAt', 'updatedAt'] },
+          order: [[sort || 'title', sort_order || 'ASC']],
+          ...(limit && { limit: Number(limit) }),
+          where: {
+            [Op.or]: [{ title: { [Op.iLike]: '%' + keyword + '%' } }],
+          },
+          offset: !Number(page) ? 0 : Number(limit) * (Number(page) - 1),
+        }),
+        await Movie.count({
+          where: {
+            [Op.or]: [{ title: { [Op.iLike]: '%' + keyword + '%' } }],
+          },
+        }),
+        await Movie.count(),
+      ]);
 
-      return res.status(200).json(movie);
+      return res.status(200).json({
+        count,
+        total,
+        limit: Number(limit),
+        page: !Number(page) ? 1 : Number(page),
+        data: movie,
+      });
     } catch (err) {
       next(err);
     }
