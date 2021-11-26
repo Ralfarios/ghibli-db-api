@@ -15,8 +15,34 @@ module.exports = (sequelize, DataTypes) => {
   }
   Movie.init(
     {
-      title: DataTypes.STRING,
-      original_title: DataTypes.STRING,
+      title: {
+        allowNull: false,
+        type: DataTypes.STRING,
+        validate: {
+          notEmpty: {
+            args: true,
+            msg: 'Please insert movie title!',
+          },
+          len: {
+            args: [1, 75],
+            msg: 'The length of movie title must be less than 75 characters.',
+          },
+        },
+      },
+      original_title: {
+        allowNull: false,
+        type: DataTypes.STRING,
+        validate: {
+          notEmpty: {
+            args: true,
+            msg: 'Please insert movie original title!',
+          },
+          len: {
+            args: [1, 75],
+            msg: 'The length of movie original title must be less than 75 characters.',
+          },
+        },
+      },
       synopsis: DataTypes.STRING,
       release_date: DataTypes.STRING,
       poster_url: DataTypes.STRING,
