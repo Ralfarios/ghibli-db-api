@@ -14,8 +14,26 @@ module.exports = (sequelize, DataTypes) => {
   }
   MovieGenre.init(
     {
-      GenreId: DataTypes.INTEGER,
-      MovieId: DataTypes.INTEGER,
+      GenreId: {
+        allowNull: false,
+        validate: {
+          notEmpty: {
+            args: true,
+            msg: 'Please insert genre',
+          },
+        },
+        type: DataTypes.INTEGER,
+      },
+      MovieId: {
+        allowNull: false,
+        validate: {
+          notEmpty: {
+            args: true,
+            msg: 'Please insert movie title!',
+          },
+        },
+        type: DataTypes.INTEGER,
+      },
     },
     {
       sequelize,
