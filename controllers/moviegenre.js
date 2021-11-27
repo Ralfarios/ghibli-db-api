@@ -44,8 +44,37 @@ class MovieGenreController {
       next(err);
     }
   }
-  static async createMovieGenre() {}
-  static async deleteMovieGenre() {}
+  static async createMovieGenre(req, res, next) {
+    try {
+      const input = {
+        GenreId: req.body.GenreId,
+        MovieId: req.body.MovieId,
+      };
+
+      await MovieGenre.create(input);
+      const msg = { message: 'New movie genre has been created.' };
+
+      return res.status(201).json(msg);
+    } catch (err) {
+      next(err);
+    }
+  }
+  static async deleteMovieGenre(req, res, next) {
+    try {
+      const moviegenre_id = Number(req.params.id);
+      const find = await MovieGenre.findByPk(moviegenre_id);
+
+      if (!find) throw { name: 'notFound' };
+
+      await MovieGenre.destroy({ where: { id: moviegenre_id } });
+
+      const msg = { message: 'Movie Genre has been deleted.' };
+
+      return res.status(200).json(msg);
+    } catch (err) {
+      next(err);
+    }
+  }
 }
 
 module.exports = MovieGenreController;
