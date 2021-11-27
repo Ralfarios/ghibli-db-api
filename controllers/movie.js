@@ -19,7 +19,7 @@ class MovieController {
         release_date: req.body.release_date,
         synopsis: req.body.synopsis,
         title: req.body.title,
-        writter: req.body.writter,
+        writer: req.body.writer,
       };
 
       await Movie.create(input);
@@ -136,7 +136,7 @@ class MovieController {
         release_date: req.body.release_date,
         synopsis: req.body.synopsis,
         title: req.body.title,
-        writter: req.body.writter,
+        writer: req.body.writer,
       };
 
       const find = await Movie.findByPk(movie_id);

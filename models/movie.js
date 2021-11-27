@@ -48,7 +48,7 @@ module.exports = (sequelize, DataTypes) => {
       poster_url: DataTypes.STRING,
       rating: DataTypes.FLOAT,
       producer: DataTypes.STRING,
-      writter: DataTypes.STRING,
+      writer: DataTypes.STRING,
       composer: DataTypes.STRING,
       duration: DataTypes.STRING,
       box_office: DataTypes.INTEGER,
