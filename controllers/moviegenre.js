@@ -39,7 +39,7 @@ class MovieGenreController {
         where: { MovieId },
       });
 
-      return res.status(200).json(moviegenre);
+      return res.status(200).json({ data: moviegenre });
     } catch (err) {
       next(err);
     }

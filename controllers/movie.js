@@ -41,14 +41,14 @@ class MovieController {
     } = req.query;
     try {
       const [movie, count, total] = await Promise.all([
-        await Movie.findAll({
+        Movie.findAll({
           attributes: { exclude: ['createdAt', 'updatedAt'] },
           order: [[sort || 'title', sort_order || 'ASC']],
           ...(limit && { limit: Number(limit) }),
           include: [
             {
               model: Character,
-              attributes: { exclude: ['createdAt', 'updatedAt'] },
+              attributes: { exclude: ['MovieId', 'createdAt', 'updatedAt'] },
             },
             {
               model: MovieGenre,
@@ -68,12 +68,12 @@ class MovieController {
           },
           offset: !Number(page) ? 0 : Number(limit) * (Number(page) - 1),
         }),
-        await Movie.count({
+        Movie.count({
           where: {
             [Op.or]: [{ title: { [Op.iLike]: '%' + keyword + '%' } }],
           },
         }),
-        await Movie.count(),
+        Movie.count(),
       ]);
 
       return res.status(200).json({
@@ -95,7 +95,7 @@ class MovieController {
         include: [
           {
             model: Character,
-            attributes: { exclude: ['createdAt', 'updatedAt'] },
+            attributes: { exclude: ['MovieId', 'createdAt', 'updatedAt'] },
           },
           {
             model: MovieGenre,
@@ -114,7 +114,7 @@ class MovieController {
 
       if (!movie) throw { name: 'notFound' };
 
-      return res.status(200).json(movie);
+      return res.status(200).json({ data: movie });
     } catch (err) {
       next(err);
     }

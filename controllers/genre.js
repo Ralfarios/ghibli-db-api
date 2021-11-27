@@ -29,7 +29,7 @@ class GenreController {
 
     try {
       const [genre, count, total] = await Promise.all([
-        await Genre.findAll({
+        Genre.findAll({
           attributes: { exclude: ['createdAt', 'updatedAt'] },
           order: [[sort || 'genre_name', sort_order || 'ASC']],
           ...(limit && { limit: Number(limit) }),
@@ -38,12 +38,12 @@ class GenreController {
           },
           offset: !Number(page) ? 0 : Number(limit) * (Number(page) - 1),
         }),
-        await Genre.count({
+        Genre.count({
           where: {
             [Op.or]: [{ genre_name: { [Op.iLike]: '%' + keyword + '%' } }],
           },
         }),
-        await Genre.count(),
+        Genre.count(),
       ]);
 
       return res.status(200).json({
