@@ -8,8 +8,11 @@ module.exports = (sequelize, DataTypes) => {
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-      Movie.hasMany(models.MovieGenre, { foreignKey: 'MovieId' });
-      Movie.hasMany(models.Character, { foreignKey: 'MovieId' });
+      Movie.hasMany(models.MovieGenre, { as: 'genres', foreignKey: 'MovieId' });
+      Movie.hasMany(models.Character, {
+        as: 'characters',
+        foreignKey: 'MovieId',
+      });
       models.MovieGenre.belongsTo(Movie, { foreignKey: 'MovieId' });
     }
   }
@@ -44,7 +47,7 @@ module.exports = (sequelize, DataTypes) => {
         },
       },
       synopsis: DataTypes.STRING,
-      release_date: DataTypes.STRING,
+      release_date: DataTypes.DATE,
       poster_url: DataTypes.STRING,
       rating: DataTypes.FLOAT,
       producer: DataTypes.STRING,

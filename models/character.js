@@ -13,12 +13,28 @@ module.exports = (sequelize, DataTypes) => {
   }
   Character.init(
     {
-      char_name: DataTypes.STRING,
+      char_name: {
+        allowNull: false,
+        type: DataTypes.STRING,
+        validate: {
+          notEmpty: {
+            args: true,
+            msg: 'Please insert character name!',
+          },
+          len: {
+            args: [1, 50],
+            msg: 'The length of character name title must be less than 50 characters.',
+          },
+        },
+      },
       char_pic: DataTypes.STRING,
       char_jp_name: DataTypes.STRING,
       seiyuu_name: DataTypes.STRING,
       va_name: DataTypes.STRING,
-      MovieId: DataTypes.INTEGER,
+      MovieId: {
+        allowNull: false,
+        type: DataTypes.INTEGER,
+      },
     },
     {
       sequelize,
