@@ -48,10 +48,12 @@ class MovieController {
           include: [
             {
               model: Character,
+              as: 'characters',
               attributes: { exclude: ['MovieId', 'createdAt', 'updatedAt'] },
             },
             {
               model: MovieGenre,
+              as: 'genres',
               attributes: {
                 exclude: ['GenreId', 'MovieId', 'createdAt', 'updatedAt'],
               },
@@ -84,6 +86,7 @@ class MovieController {
         data: movie,
       });
     } catch (err) {
+      console.log(err, '<<<');
       next(err);
     }
   }
@@ -95,10 +98,12 @@ class MovieController {
         include: [
           {
             model: Character,
+            as: 'characters',
             attributes: { exclude: ['MovieId', 'createdAt', 'updatedAt'] },
           },
           {
             model: MovieGenre,
+            as: 'genres',
             attributes: {
               exclude: ['GenreId', 'MovieId', 'createdAt', 'updatedAt'],
             },
